@@ -5,9 +5,12 @@ from . import views
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    # url(r'^signup/$',views.signup, name = 'signup'),
+	url(r'^$', views.dashboard, name='dashboard'),
     url(r'^signup/$',views.signup, name='signup'),
-    url('^', include('django.contrib.auth.urls')),
-    url(r'^login/$',auth_views.login),
+    url(r'^edit/$', views.edit, name='edit'),
+
+
+    url(r'^login/$',auth_views.login,{'template_name': 'insta/registration/login.html'}, name='login'),
+
 
 ]    
