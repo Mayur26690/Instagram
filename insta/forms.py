@@ -2,7 +2,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.conf import settings
-from .models import Profile
+from .models import Profile 
+from imgs.models import Image
 
 class LoginForm(forms.Form):
 	username = forms.CharField()

@@ -11,6 +11,7 @@ urlpatterns = [
 
 
     url(r'^login/$',auth_views.login,{'template_name': 'insta/registration/login.html'}, name='login'),
+    url(r'^logout/$',auth_views.logout,{'template_name': 'insta/registration/logout.html'}, name='logout'),
 
 
 ]    

@@ -7,7 +7,8 @@ from .forms import SignUpForm,LoginForm,UserEditForm,ProfileEditForm
 from django.contrib.auth import login as auth_login
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from .models import Profile, Image
+from .models import Profile 
+from imgs.models import Image
 
 @csrf_exempt 
 def signup(request):
