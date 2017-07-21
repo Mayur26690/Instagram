@@ -2,6 +2,9 @@
 from __future__ import unicode_literals
 from django.conf import settings
 from django.db import models
+from django.utils.text import slugify
+from django.core.urlresolvers import reverse
+from django.contrib.contenttypes.models import ContentType
 
 # Create your models here.
 class Image(models.Model):
@@ -22,6 +25,12 @@ class Image(models.Model):
 
 	def get_absolute_url(self):
 		return reverse('images:detail', args=[self.id, self.slug])
+
+	@property
+	def get_content_type(self):
+		instance = self
+		content_type = ContentType.objects.get_for_model(instance.__class__)
+		return content_type
 
 	def __str__(self):
 		return 'image of user {}'.format(self.user.username)
