@@ -2,13 +2,14 @@
 from __future__ import unicode_literals
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Image
-from .forms import ImageUploadForm
+from .models import Image, Comment
+from .forms import ImageUploadForm, CommentForm
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.views.decorators.http import require_POST
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 # Create your views here.
 @login_required
@@ -46,9 +47,14 @@ def image_detail(request, id, slug):
 		content_type = ContentType.objects.get(model=c_type)
 		obj_id = form.cleaned_data.get('object_id')
 		content_data = form.cleaned_data.get('content')
-		
+		new_comment, created = Comment.objects.get_or_create(
+								user=request.user,
+								content_type=content_type,
+								object_id=obj_id,
+								content=content_data)
 	comments = image.comments
-	return render(request, 'imgs/detail.html', {'section': 'images', 'image': image})
+	return render(request, 'imgs/detail.html', {'section': 'images', 'image': image, 'comments': comments,
+														'comment_form': form})
 
 @login_required
 @require_POST
@@ -66,4 +72,4 @@ def image_like(request):
 			return JsonResponse({'status': 'ok'})
 		except:
 			pass
-	return JsonResponse({'status': 'ko'})	
+	return JsonResponse({'status': 'ok'})	

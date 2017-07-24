@@ -5,6 +5,7 @@ from django.db import models
 from django.utils.text import slugify
 from django.core.urlresolvers import reverse
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
 
 # Create your models here.
 class Image(models.Model):
@@ -36,3 +37,33 @@ class Image(models.Model):
 		return 'image of user {}'.format(self.user.username)
 	def __unicode__(self):
 		return 'image of user {}'.format(self.user.username)
+
+	@property
+	def comments(self):
+		instance = self
+		qs = Comment.objects.filter_by_instance(instance)
+		return qs
+
+class CommentManager(models.Manager):
+	def filter_by_instance(self, instance):
+		content_type = ContentType.objects.get_for_model(instance.__class__)
+		obj_id = instance.id
+		qs = super(CommentManager, self).filter(content_type=content_type, object_id=obj_id)
+		return qs
+
+
+class Comment(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
+	content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True)
+	object_id = models.PositiveIntegerField(null=True)
+	content_object = GenericForeignKey('content_type', 'object_id')
+
+	content = models.TextField()
+	timestamp = models.DateTimeField(auto_now_add=True)
+
+	objects = CommentManager()
+
+	def __str__(self):
+		return str(self.user.username)
+	def __unicode__(self):
+		return str(self.user.username)
