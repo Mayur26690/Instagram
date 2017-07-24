@@ -140,7 +140,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # now you should be able to log in using your username or e-mail account seamlessly.
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'account.authentication.EmailAuthBackend',
+    'insta.authentication.EmailAuthBackend',
 )
 
 ABSOLUTE_URL_OVERRIDES = {
