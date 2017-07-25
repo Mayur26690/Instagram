@@ -56,7 +56,7 @@ def user_list(request):
 	query = request.GET.get('q')
 	if query:
 		users = users.filter(username__icontains=query)
-	return render(request, 'imgs/list.html', {'section': 'people', 'users': users})
+	return render(request, 'insta/rege/user/list.html', { 'users': users})
 
 @require_POST
 @login_required
@@ -81,7 +81,7 @@ def user_follow(request):
 def user_detail(request, username):
 	user = get_object_or_404(User, username=username, is_active=True)
 	images = Image.objects.filter(user=user)
-	return render(request, 'imgs/detail.html', {'section': 'people', 'user': user, 'images': images})	
+	return render(request, 'insta/rege/user/detail.html', {'section': 'people', 'user': user, 'images': images})	
 
 @login_required
 def dashboard(request):
