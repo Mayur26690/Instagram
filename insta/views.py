@@ -32,16 +32,20 @@ def signup(request):
 
 @login_required
 def edit(request):
+	print 'edit'
 	if request.method == 'POST':
+		print 'done'
 		user_form = UserEditForm(instance=request.user, data=request.POST)
 		profile_form = ProfileEditForm(instance=request.user.profile, data=request.POST, files=request.FILES)
+		print 'done'
 		if user_form.is_valid() and profile_form.is_valid():
-			user_form.save()
-			profile_form.save()
+			user_form.save(commit=True)
+			profile_form.save(commit=True)
 			print 'Successful'
 		else:
 			print 'Error'
 	else:
+		print 'else'
 		user_form = UserEditForm(instance=request.user)
 		profile_form = ProfileEditForm(instance=request.user.profile)
 	return render(request, 'insta/rege/edit.html', {'user_form': user_form, 'profile_form': profile_form})

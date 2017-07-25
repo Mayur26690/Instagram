@@ -44,7 +44,9 @@ def image_detail(request, id, slug):
 	form = CommentForm(request.POST or None, initial=initial_data)
 	if form.is_valid():
 		c_type = form.cleaned_data.get('content_type')
-		content_type = ContentType.objects.get(model=c_type)
+		content_types = ContentType.objects.filter(model=c_type)
+		if content_types:
+			content_type = content_types[0]
 		obj_id = form.cleaned_data.get('object_id')
 		content_data = form.cleaned_data.get('content')
 		new_comment, created = Comment.objects.get_or_create(
@@ -72,4 +74,4 @@ def image_like(request):
 			return JsonResponse({'status': 'ok'})
 		except:
 			pass
-	return JsonResponse({'status': 'ok'})	
+	return JsonResponse({'status': 'ko'})	
