@@ -21,35 +21,17 @@ def signup(request):
 	if request.method == 'POST':
 		form = SignUpForm(request.POST)
 		if form.is_valid():
-			new_user = form.save(commit=False)
-			new_user.set_password(form.cleaned_data['password1'])
-			new_user.save()
-			profile = Profile.objects.create(user=new_user)
-			return render(request, 'insta/rege/signup_done.html')
+			form.save()
+			username = form.cleaned_data.get('username')
+			raw_password = form.cleaned_data.get('password1')
+			user = authenticate(username=username, password=raw_password)
+			profile = Profile.objects.create(user=user)
+			return render(request, 'insta/rege/signup_done.html', {'new_user': user})
 	else:
 		form = SignUpForm()
 	return render(request, 'insta/rege/signup.html', {'form': form})
 
-@login_required
-def edit(request):
-	if request.method == 'POST':
-		user_form = UserEditForm(instance=request.user, data=request.POST)
-		profile_form = ProfileEditForm(instance=request.user.profile, data=request.POST, files=request.FILES)
-		if user_form.is_valid() and profile_form.is_valid():
-			new_item = user_form.save(commit=False)
-			
-			new_item.user = request.user
-			new_item.save()
-			new_profile = profile_form.save(commit=False)
-			new_profile.user = request.user
-			new_profile.save()
-			print 'Successful'
-		else:
-			print 'Error'
-	else:
-		new_item = UserEditForm(instance=request.user)
-		new_profile = ProfileEditForm(instance=request.user.profile)
-	return render(request, 'insta/rege/edit.html', {'user_form': new_item, 'profile_form': new_profile})
+
 
 @login_required
 def user_list(request):
@@ -58,6 +40,29 @@ def user_list(request):
 	if query:
 		users = users.filter(username__icontains=query)
 	return render(request, 'insta/rege/user/list.html', { 'users': users})
+
+@login_required
+def edit(req):
+	if req.method == 'POST':
+		print 'post'
+		user_form = UserEditForm(instance=req.user, data=req.POST)
+		profile_form = ProfileEditForm(instance=req.user.profile, data=req.POST, files=req.FILES)
+		if user_form.is_valid() and profile_form.is_valid():
+			print 'valid'
+			new_item = user_form.save(commit=False)
+			new_item.user = req.user
+			new_item.save()
+			new_profile = profile_form.save(commit=False)
+			new_profile.user = req.user
+			new_profile.save()
+			print 'Successful'
+		else:
+			print 'Error'
+	else:
+		print 'else'
+		new_item = UserEditForm(instance=req.user)
+		new_profile = ProfileEditForm(instance=req.user.profile)
+	return render(req, 'insta/rege/edit.html', {'user_form': new_item, 'profile_form': new_profile})
 
 @require_POST
 @login_required
