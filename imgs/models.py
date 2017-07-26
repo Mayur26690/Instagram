@@ -28,6 +28,13 @@ class Image(models.Model):
 		return reverse('images:detail', args=[self.id, self.slug])
 
 	@property
+	def comments(self):
+		instance = self
+		qs = Comment.objects.filter_by_instance(instance)
+		print qs
+		return qs
+
+	@property
 	def get_content_type(self):
 		instance = self
 		content_type = ContentType.objects.get_for_model(instance.__class__)
@@ -38,11 +45,7 @@ class Image(models.Model):
 	def __unicode__(self):
 		return 'image of user {}'.format(self.user.username)
 
-	@property
-	def comments(self):
-		instance = self
-		qs = Comment.objects.filter_by_instance(instance)
-		return qs
+	
 
 class CommentManager(models.Manager):
 	def filter_by_instance(self, instance):
@@ -54,6 +57,7 @@ class CommentManager(models.Manager):
 
 class Comment(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
+
 	content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True)
 	object_id = models.PositiveIntegerField(null=True)
 	content_object = GenericForeignKey('content_type', 'object_id')
@@ -67,3 +71,5 @@ class Comment(models.Model):
 		return str(self.user.username)
 	def __unicode__(self):
 		return str(self.user.username)
+	class Meta:
+		ordering = ['-timestamp']
