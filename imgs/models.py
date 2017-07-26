@@ -27,12 +27,6 @@ class Image(models.Model):
 	def get_absolute_url(self):
 		return reverse('images:detail', args=[self.id, self.slug])
 
-	@property
-	def comments(self):
-		instance = self
-		qs = Comment.objects.filter_by_instance(instance)
-		print qs
-		return qs
 
 	@property
 	def get_content_type(self):
@@ -45,15 +39,6 @@ class Image(models.Model):
 	def __unicode__(self):
 		return 'image of user {}'.format(self.user.username)
 
-	
-
-class CommentManager(models.Manager):
-	def filter_by_instance(self, instance):
-		content_type = ContentType.objects.get_for_model(instance.__class__)
-		obj_id = instance.id
-		qs = super(CommentManager, self).filter(content_type=content_type, object_id=obj_id)
-		return qs
-
 
 class Comment(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
@@ -65,7 +50,6 @@ class Comment(models.Model):
 	content = models.TextField()
 	timestamp = models.DateTimeField(auto_now_add=True)
 
-	objects = CommentManager()
 
 	def __str__(self):
 		return str(self.user.username)

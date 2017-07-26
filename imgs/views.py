@@ -46,13 +46,10 @@ def image_detail(request, id, slug):
 	if form.is_valid():
 		c_type = form.cleaned_data.get('content_type')
 		content_types = ContentType.objects.filter(model=c_type)
-		print content_types
 		if content_types:
 			content_type = content_types[0]
 		obj_id = form.cleaned_data.get('object_id')
-		print obj_id
 		content_data = form.cleaned_data.get('content')
-		print content_data
 		new_comment, created = Comment.objects.get_or_create(
 								user=request.user,
 								content_type=content_type,
