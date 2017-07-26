@@ -15,7 +15,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 @login_required
 def  img_list(req):
 	images = Image.objects.all()
-	return render(req, 'imgs/list.html',{'section': 'images','images': images})
+	return render(req, 'imgs/list.html',{'images': images})
 
 @login_required
 def image_upload(request):
