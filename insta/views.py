@@ -14,6 +14,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.db.models import Q
 
 
 @csrf_exempt 
@@ -36,11 +37,9 @@ def edit(request):
 	new_item = UserEditForm(instance=request.user)
 	new_profile = ProfileEditForm(instance=request.user.profile)
 	if request.POST:
-		print 'post'
 		user_form = UserEditForm(instance=request.user, data=request.POST)
 		profile_form = ProfileEditForm(instance=request.user.profile, data=request.POST, files=request.FILES)
 		if user_form.is_valid() and profile_form.is_valid():
-			print 'valid'
 			new_item = user_form.save(commit=False)
 			new_item.user = request.user
 			new_item.save()
@@ -91,4 +90,12 @@ def dashboard(request):
 	user = request.user
 	images = Image.objects.filter(user=user)
 	return render(request, 'insta/rege/dashboard.html', {'section': 'dashboard', 'user': user, 'images': images})	
+
+def search_view(request):
+	if not request.user.is_authenticated:
+		raise Http404
+	query = request.GET.get("q")
+	if query:
+		userlist = User.objects.all().filter(Q(name_icontains=query) | Q(username__icontains=query))
+	return render(request, "detail.html", {"users":userlist})		
 
